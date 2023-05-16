@@ -1,0 +1,12 @@
+{
+	"ID": "c99y4oeqzndptaul3aq1lmiq9jolewhc",
+	"ActionKeyword": "ad",
+	"Name": "Audio Environments",
+	"Description": "Create audio environments for each use case.",
+	"Author": "marcelmiro",
+	"Version": "0.0.1",
+	"Language": "python",
+	"Website": "https://github.com/marcelmiro/Flow.Launcher.Plugin.AudioEnvironments",
+	"ExecuteFileName": "main.py",
+	"IcoPath": "Images\\speaker.png"
+}

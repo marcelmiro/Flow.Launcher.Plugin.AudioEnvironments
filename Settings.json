@@ -1,0 +1,20 @@
+{
+	"environments": [
+		{
+			"title": "Earphones",
+			"output": "Earphones (Realtek(R) Audio)",
+			"input": "Microphone (NVIDIA RTX Voice)",
+			"communication": "RTX (NVIDIA RTX Voice)"
+		},
+		{
+			"title": "Headset",
+			"output": "Headset (Realtek(R) Audio)",
+			"input": "Microphone (2- SteelSeries Siberia 800)"
+		},
+		{
+			"title": "Speakers",
+			"output": "Speakers (Realtek(R) Audio)",
+			"input": "Microphone (NVIDIA RTX Voice)"
+		}
+	]
+}
