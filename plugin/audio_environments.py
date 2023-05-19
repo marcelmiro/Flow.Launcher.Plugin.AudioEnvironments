@@ -2,68 +2,58 @@ import os
 import json
 import pyperclip
 from flox import Flox
+from functools import cached_property
 from plugin.audio_controller import list_devices, find_device, set_default_device
 
 parent_folder_path = os.path.abspath(os.path.dirname(__file__))
 settings_dir = os.path.join(parent_folder_path, '../Settings.json')
 
 
-def list_environments():
-    envs = []
+class AudioEnvironments(Flox):
+    @cached_property
+    def devices(self):
+        return list_devices()
 
-    try:
-        with open(settings_dir, "r") as file:
-            data = json.load(file)
+    @cached_property
+    def options(self):
+        envs = []
 
-            # Validate data
-            data_envs = data.get("environments")
-            if type(data_envs) is list:
-                for env in data_envs:
-                    if type(env) is dict:
-                        envs.append(env)
-    except FileNotFoundError:
-        # Create file if not found
-        with open(settings_dir, "w") as file:
-            json.dump({"environments": []}, file)
+        try:
+            with open(settings_dir, "r") as file:
+                data = json.load(file)
 
-    if len(envs) > 0:
-        return (envs, None)
+                # Validate data
+                data_envs = data.get("environments")
+                if type(data_envs) is list:
+                    for env in data_envs:
+                        if type(env) is dict:
+                            envs.append(env)
+        except FileNotFoundError:
+            # Create file if not found
+            with open(settings_dir, "w") as file:
+                json.dump({"environments": []}, file)
 
-    error = {
-        "title": "No environments have been found in the config file",
-        "subtitle": "Open the config file",
-        "method": "open_settings"
-    }
-    return (None, error)
+        errors = []
+        options = [
+            {
+                "title": "List devices",
+                "subtitle": "Copy list of devices",
+                "method": "copy_devices"
+            },
+            {
+                "title": "Settings",
+                "subtitle": "Open the config file",
+                "method": "open_settings",
+            }
+        ]
 
+        if len(envs) == 0:
+            errors.append({
+                "title": "No environments have been found in the config file",
+                "subtitle": "Open the config file",
+                "method": "open_settings"
+            })
 
-def get_data():
-    (envs, env_error) = list_environments()
-    devices = list_devices()
-
-    deviceNames = []
-    for device in devices:
-        deviceNames.append(device.FriendlyName)
-
-    errors = []
-    options = [
-        {
-            "title": "List devices",
-            "subtitle": "Copy list of devices",
-            "method": "copy",
-            "parameters": ["\n".join(deviceNames)]
-        },
-        {
-            "title": "Settings",
-            "subtitle": "Open the config file",
-            "method": "open_settings",
-        }
-    ]
-
-    if not envs and env_error:
-        errors.append({**env_error, "score": 100})
-
-    if envs:
         for env in envs:
             options.append(
                 {
@@ -75,22 +65,17 @@ def get_data():
                 }
             )
 
-    return (options, devices, errors)
-
-
-class AudioEnvironments(Flox):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        (self.options, self.devices, self.errors) = get_data()
+        return (errors, options)
 
     def query(self, query):
         query = query.strip().lower()
+        (errors, options) = self.options
 
-        for error in self.errors:
-            self.add_item(**error)
+        for error in errors:
+            self.add_item(**error, score=100)
 
         # Filter options
-        for option in self.options:
+        for option in options:
             if not query or query in option.get("title").lower():
                 self.add_item(**option)
 
@@ -116,8 +101,11 @@ class AudioEnvironments(Flox):
     def open_settings(self):
         os.startfile(settings_dir)
 
-    def copy(self, text):
-        pyperclip.copy(text)
+    def copy_devices(self):
+        deviceNames = []
+        for device in self.devices:
+            deviceNames.append(device.FriendlyName)
+        pyperclip.copy("\n".join(deviceNames))
 
 
 if __name__ == "__main__":

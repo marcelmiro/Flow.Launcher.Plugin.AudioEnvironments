@@ -1,15 +1,16 @@
-## This module is in large chunks taken from https://github.com/kdschlosser/pyWinCoreAudio/blob/431d5d9b470083a6a5c51738e08b12009fa315eb/pyWinCoreAudio/__core_audio/policyconfig.py.
-## This requires us to use comtypes alongside pywin32, which is somewhat of a duplication in depedencies.
-## I think we could use pyWinCoreAudio instead of soundcard, but we will still likely need pywin32 for the service.
+# This module is in large chunks taken from https://github.com/kdschlosser/pyWinCoreAudio/blob/431d5d9b470083a6a5c51738e08b12009fa315eb/pyWinCoreAudio/__core_audio/policyconfig.py.
+# This requires us to use comtypes alongside pywin32, which is somewhat of a duplication in depedencies.
+# I think we could use pyWinCoreAudio instead of soundcard, but we will still likely need pywin32 for the service.
 
 
-import comtypes, enum
+import comtypes
+import enum
 from comtypes import COMMETHOD, GUID
 import ctypes
 from ctypes import (
     POINTER,
     HRESULT,
-     c_int as enum
+    c_int as enum
 )
 
 
@@ -41,6 +42,7 @@ REFERENCE_TIME = ctypes.c_longlong
 LPCGUID = POINTER(GUID)
 LPREFERENCE_TIME = POINTER(REFERENCE_TIME)
 
+
 class DeviceSharedMode(ctypes.Structure):
     _fields_ = [
         ('dummy_', INT)
@@ -48,6 +50,7 @@ class DeviceSharedMode(ctypes.Structure):
 
 
 PDeviceSharedMode = POINTER(DeviceSharedMode)
+
 
 class WAVEFORMATEX(ctypes.Structure):
     _fields_ = [
@@ -63,6 +66,7 @@ class WAVEFORMATEX(ctypes.Structure):
 
 PWAVEFORMATEX = POINTER(WAVEFORMATEX)
 
+
 class _tagpropertykey(ctypes.Structure):
     pass
 
@@ -70,11 +74,13 @@ class _tagpropertykey(ctypes.Structure):
 class tag_inner_PROPVARIANT(ctypes.Structure):
     pass
 
+
 PROPVARIANT = tag_inner_PROPVARIANT
 PPROPVARIANT = POINTER(PROPVARIANT)
 
 PROPERTYKEY = _tagpropertykey
 PPROPERTYKEY = POINTER(_tagpropertykey)
+
 
 class ERole(enum):
     eConsole = 0
@@ -181,6 +187,7 @@ class IPolicyConfig(comtypes.IUnknown):
 
 
 PIPolicyConfig = POINTER(IPolicyConfig)
+
 
 class AudioSes(object):
     name = u'AudioSes'
