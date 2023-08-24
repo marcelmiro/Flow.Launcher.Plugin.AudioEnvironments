@@ -76,7 +76,13 @@ class AudioEnvironments(Flox):
 
         # Filter options
         for option in options:
-            if not query or query in option.get("title").lower():
+            if not query:
+                self.add_item(**option)
+
+            title = option.get("title").lower()
+            if title.startswith(query):
+                self.add_item(**option, score=90)
+            elif query in title:
                 self.add_item(**option)
 
     def switch_env(self, output, input, communication):
